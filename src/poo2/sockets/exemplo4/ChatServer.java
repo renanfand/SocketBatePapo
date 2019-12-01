@@ -65,7 +65,10 @@ public class ChatServer {
                 }
 
                 out.println("NAMEACCEPTED " + name);
+                out.println("ONLINENAMES" + names.toString());
                 for (PrintWriter writer : writers) {
+
+                	writer.println("ONLINENAMES" + names.toString());
                     writer.println("MESSAGE " + name + " entrou agora!" + "\t\t\t" + this.getDateTime());
                 }
                 writers.add(out);
@@ -91,6 +94,8 @@ public class ChatServer {
                     //System.out.println(name + " saiu!" + "\t\t\t" + this.getDateTime());
                     names.remove(name);
                     for (PrintWriter writer : writers) {
+
+                    	writer.println("ONLINENAMES" + names.toString());
                         writer.println("MESSAGE " + name + " saiu! " + "\t\t\t" + this.getDateTime());
                     }
                 }

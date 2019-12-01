@@ -21,15 +21,20 @@ public class ChatClient {
     JFrame frame = new JFrame("Bate Papo");
     JTextField textField = new JTextField(50);
     JTextArea messageArea = new JTextArea(16, 50);
+    JTextArea onlineArea = new JTextArea(5, 10);
 
     public ChatClient(String serverAddress) {
         this.serverAddress = serverAddress;
 
         textField.setEditable(false);
         messageArea.setEditable(false);
+        onlineArea.setEditable(false);
         frame.getContentPane().add(textField, BorderLayout.SOUTH);
         frame.getContentPane().add(new JScrollPane(messageArea), BorderLayout.CENTER);
+        frame.getContentPane().add(onlineArea, BorderLayout.EAST);
         frame.pack();
+        
+        onlineArea.setText("Usuários online: \n");
 
         textField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -60,6 +65,18 @@ public class ChatClient {
                 if (line.startsWith("SUBMITNAME")) {
                     out.println(getName());
                 } 
+                else if (line.startsWith("ONLINENAMES")) {
+
+                    System.out.println("ONLINENAMES");
+                    onlineArea.setText("Usuários online: \n");
+                    line = line.replace("[", "").replace("]", "");
+                    String[] onlineUsers = line.substring(11).split(",");
+                    System.out.println(onlineUsers.length);
+                    for (String onlineUser : onlineUsers) {
+                    	
+                        onlineArea.append(onlineUser + "\n");	
+					}
+                }
                 else if (line.startsWith("NAMEACCEPTED")) {
                     this.frame.setTitle("Bate Papo - " + line.substring(13));
                     textField.setEditable(true);
