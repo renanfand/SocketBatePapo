@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 public class ChatServer {
 
     private static Set<String> names = new HashSet<>();
+    private static Set<String> writingNames = new HashSet<>();
     private static Set<PrintWriter> writers = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
@@ -66,6 +67,7 @@ public class ChatServer {
 
                 out.println("NAMEACCEPTED " + name);
                 out.println("ONLINENAMES" + names.toString());
+                out.println("WRITTINGNAMES" + writingNames.toString());
                 for (PrintWriter writer : writers) {
 
                 	writer.println("ONLINENAMES" + names.toString());
@@ -78,8 +80,24 @@ public class ChatServer {
                     if (input.toLowerCase().startsWith("/quit")) {
                         return;
                     }
-                    for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + ": " + input + "\t\t\t" + this.getDateTime());
+                    if (input.startsWith("WRITTING")) {
+                    	writingNames.add(name);
+                    	
+                        for (PrintWriter writer : writers) {
+                            writer.println("WRITTINGNAMES" + writingNames.toString());
+                        }
+                    } else if (input.startsWith("STOPPINGWRITTING")) {
+                    	writingNames.remove(name);
+
+	                	 for (PrintWriter writer : writers) {
+	                         writer.println("WRITTINGNAMES" + writingNames.toString());
+	                     }
+                    }
+                    else {
+
+                        for (PrintWriter writer : writers) {
+                            writer.println("MESSAGE " + name + ": " + input + "\t\t\t" + this.getDateTime());
+                        }	
                     }
                 }
             } 
@@ -88,13 +106,17 @@ public class ChatServer {
             } 
             finally {
                 if (out != null) {
-                    writers.remove(out);
+                	writers.remove(out);
+                	
                 }
                 if (name != null) {
                     //System.out.println(name + " saiu!" + "\t\t\t" + this.getDateTime());
                     names.remove(name);
+                    writingNames.remove(name);
+
                     for (PrintWriter writer : writers) {
 
+                    	writer.println("WRITTINGNAMES" + writingNames.toString());
                     	writer.println("ONLINENAMES" + names.toString());
                         writer.println("MESSAGE " + name + " saiu! " + "\t\t\t" + this.getDateTime());
                     }
